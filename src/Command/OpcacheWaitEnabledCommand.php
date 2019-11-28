@@ -52,8 +52,8 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
 
             $enabled = $this->isOpcacheEnabled($info);
 
-            if ($timeout > 0 && time() - $startTime >= $timeout) {
-                break;
+            if (!$enabled && $timeout > 0 && time() - $startTime >= $timeout) {
+                throw new \RuntimeException('OPcache wait timeout exceeded');
             }
 
             if (!$enabled) {
