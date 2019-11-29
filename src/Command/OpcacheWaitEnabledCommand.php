@@ -25,12 +25,19 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
     {
         $this
             ->setName('opcache:wait:enabled')
-            ->setDescription('Wait until opcache is enabled')
+            ->setDescription('Wait until OPcache is enabled')
             ->addOption(
                 'timeout',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Wait timeout is seconds'
+            )
+            ->addOption(
+                'interval',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'OPcache checking interval',
+                '1'
             )
             ->setHelp('');
     }
@@ -42,6 +49,15 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
     {
         $timeout = $input->hasOption('timeout') ? intval($input->getOption('timeout')) : 0;
         $startTime = time();
+
+        $interval = 1;
+        if ($input->hasOption('interval')) {
+            $interval = intval($input->getOption('interval'));
+        }
+
+        if ($interval < 1) {
+            $interval = 1;
+        }
 
         do {
             try {
@@ -57,7 +73,7 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
             }
 
             if (!$enabled) {
-                sleep(1);
+                sleep($interval);
             }
         } while (!$enabled);
 
