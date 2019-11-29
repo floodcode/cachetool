@@ -48,16 +48,10 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $timeout = $input->hasOption('timeout') ? intval($input->getOption('timeout')) : 0;
+        $interval = $input->hasOption('interval') ? intval($input->getOption('interval')) : 1;
+        $interval = max($interval, 1);
+
         $startTime = time();
-
-        $interval = 1;
-        if ($input->hasOption('interval')) {
-            $interval = intval($input->getOption('interval'));
-        }
-
-        if ($interval < 1) {
-            $interval = 1;
-        }
 
         do {
             try {
