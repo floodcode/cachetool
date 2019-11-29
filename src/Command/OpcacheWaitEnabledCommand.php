@@ -54,13 +54,7 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
         $startTime = time();
 
         do {
-            try {
-                $info = $this->getCacheTool()->opcache_get_status(false);
-            } catch (\Exception $ex) {
-                $info = false;
-            }
-
-            $enabled = $this->isOpcacheEnabled($info);
+            $enabled = $this->isOpcacheEnabled();
 
             if (!$enabled && $timeout > 0 && time() - $startTime >= $timeout) {
                 throw new \RuntimeException('OPcache wait timeout exceeded');
@@ -78,11 +72,16 @@ class OpcacheWaitEnabledCommand extends AbstractCommand
     }
 
     /**
-     * @param array $info
      * @return bool
      */
-    private function isOpcacheEnabled($info)
+    private function isOpcacheEnabled()
     {
+        try {
+            $info = $this->getCacheTool()->opcache_get_status(false);
+        } catch (\Exception $ex) {
+            $info = false;
+        }
+
         return is_array($info) && array_key_exists('opcache_enabled', $info) && $info['opcache_enabled'];
     }
 }
